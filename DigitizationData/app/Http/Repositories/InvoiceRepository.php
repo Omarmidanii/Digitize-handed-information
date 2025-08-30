@@ -26,15 +26,15 @@ class InvoiceRepository extends BaseRepository implements InvoiceRepositoryInter
     public function upload($data, $request)
     {
         $user = Auth::user();
-        // $uploaded = $request->file('file');
-        $testPath = storage_path('app/Invoices/CCI_000888.jpg'); // put your test file here
-        $uploaded = new UploadedFile(
-            $testPath,
-            basename($testPath),
-            mime_content_type($testPath),
-            null,
-            true // mark as "test mode" so Laravel won’t check if file was uploaded via HTTP
-        );
+        $uploaded = $request->file('file');
+        // $testPath = storage_path('app/Invoices/Test.jpg'); // put your test file here
+        // $uploaded = new UploadedFile(
+        //     $testPath,
+        //     basename($testPath),
+        //     mime_content_type($testPath),
+        //     null,
+        //     true // mark as "test mode" so Laravel won’t check if file was uploaded via HTTP
+        // );
         $storedPath = $uploaded->store('invoices', 'public');
         $absPath = Storage::disk('public')->path($storedPath);
 

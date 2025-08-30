@@ -2,10 +2,12 @@
 
 namespace App\Http\Resources\Invoice;
 
+use App\Http\Resources\Items\ItemResource;
+use App\Models\InvoiceItem;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class InvoiceResourse extends JsonResource
+class InvoiceResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,11 +16,13 @@ class InvoiceResourse extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $item = new ItemResource(InvoiceItem::where('invoice_id', $this->id)->first());
         return [
             'id' => $this->id,
             'photo' => $this->whenLoaded('file', function () {
                 return $this->file->url;
             }),
+            'item' => $item ?? null,
             'user' => $this->whenLoaded('user'),
             'invoice_number' => $this->invoice_number,
             'client_name' => $this->client_name,

@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Resources\Invoice\InvoiceResource;
 use App\Trait\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Interfaces\InvoiceRepositoryInterface;
 use App\Http\Requests\Invoice\StoreInvoiceRequest;
-use App\Http\Resources\Invoice\InvoiceResourse;
 use Throwable;
 use Illuminate\Http\Request;
 
@@ -26,7 +26,7 @@ class InvoiceController extends Controller
     {
         try {
             $data = $this->invoiceRepository->index();
-            return $this->SuccessMany($data, InvoiceResourse::class, 'Invoices indexed successfully');
+            return $this->SuccessMany($data, InvoiceResource::class, 'Invoices indexed successfully');
         } catch (Throwable $th) {
             $code = 500;
             if ($th->getCode() != 0)
@@ -40,7 +40,7 @@ class InvoiceController extends Controller
         try {
             $validated = $request->validated();
             $data = $this->invoiceRepository->upload($validated, $request);
-            return $this->SuccessOne($data['invoice'], InvoiceResourse::class, 'Invoice created successfully');
+            return $this->SuccessOne($data['invoice'], InvoiceResource::class, 'Invoice created successfully');
         } catch (Throwable $th) {
             $code = 500;
             if ($th->getCode() != 0)
@@ -52,8 +52,8 @@ class InvoiceController extends Controller
     public function show($id)
     {
         try {
-            $data = $this->invoiceRepository->show($id);
-            return $this->SuccessOne($data, InvoiceResourse::class, 'Successful');
+            $data = $this->invoiceRepository->show($id, ['file']);
+            return $this->SuccessOne($data, InvoiceResource::class, 'Successful');
         } catch (Throwable $th) {
             $code = 500;
             if ($th->getCode() != 0)
@@ -71,7 +71,7 @@ class InvoiceController extends Controller
                 'filename' => 'sometimes|string|max:100',
             ]);
             $data = $this->invoiceRepository->exportSelected($validated);
-            return $this->SuccessOne($data, InvoiceResourse::class, 'Invoices exported successfully');
+            return $this->SuccessOne($data, InvoiceResource::class, 'Invoices exported successfully');
         } catch (Throwable $th) {
             $code = 500;
             if ($th->getCode() != 0)

@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class File extends Model
 {
@@ -25,6 +27,9 @@ class File extends Model
 
     public function getUrlAttribute()
     {
-        return $this->path ? url($this->path) : null;
+        if (!$this->path)
+            return null;
+        $url = Storage::disk('public')->url($this->path);
+        return Str::startsWith($url, ['http://', 'https://']) ? $url : asset($url);
     }
 }
