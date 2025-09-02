@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Requests\Invoice\UpdateInvoiceRequest;
 use App\Http\Resources\Invoice\InvoiceResource;
 use App\Trait\ApiResponse;
 use App\Http\Controllers\Controller;
@@ -54,6 +55,21 @@ class InvoiceController extends Controller
         try {
             $data = $this->invoiceRepository->show($id, ['file']);
             return $this->SuccessOne($data, InvoiceResource::class, 'Successful');
+        } catch (Throwable $th) {
+            $code = 500;
+            if ($th->getCode() != 0)
+                $code = $th->getCode();
+            return $this->Error(null, $th->getMessage(), $code);
+        }
+    }
+
+
+    public function update(UpdateInvoiceRequest $request)
+    {
+        try {
+            $validated = $request->validated();
+            $data = $this->invoiceRepository->upload($validated, $request);
+            return $this->SuccessOne($data['invoice'], InvoiceResource::class, 'Invoice created successfully');
         } catch (Throwable $th) {
             $code = 500;
             if ($th->getCode() != 0)

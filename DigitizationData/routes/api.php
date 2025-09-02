@@ -27,6 +27,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/upload', 'upload');
     });
     Route::controller(FileController::class)->prefix('files')->group(function () {
+        Route::get('', 'index');
         Route::get('/download/{id}', 'downloadFile');
         Route::post('/download', 'download');
     });
