@@ -49,6 +49,7 @@ class InvoiceRepository extends BaseRepository implements InvoiceRepositoryInter
                 ]);
                 // call Python service with the file
                 $url = config('services.ocr.endpoint');
+                \Log::info("here we go");
                 $resp = Http::timeout(60)
                     ->attach('file', file_get_contents($absPath), $uploaded->getClientOriginalName())
                     ->post($url . '/analyze', [

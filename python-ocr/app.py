@@ -11,6 +11,7 @@ async def analyze_endpoint(
     filename: str = Form(None),  # optional
     # img_path: str = Form(None)  # no longer needed
 ):
+    print("hello")
     image_bytes = await file.read()
     if not image_bytes:
         raise HTTPException(400, "empty file")

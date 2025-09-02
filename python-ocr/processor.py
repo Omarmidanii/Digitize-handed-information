@@ -23,6 +23,7 @@ def analyze(image_bytes: bytes,filename: str = None):
             'lang': 'ara'
         }
     )
+    
     if response.status_code == 200:
         print("Response:")
         print(response.json())
