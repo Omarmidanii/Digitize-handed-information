@@ -16,7 +16,7 @@ class InvoiceResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $item = new ItemResource(InvoiceItem::where('invoice_id', $this->id)->first());
+        $item = ItemResource::collection(InvoiceItem::where('invoice_id', $this->id)->get());
         return [
             'id' => $this->id,
             'photo' => $this->whenLoaded('file', function () {

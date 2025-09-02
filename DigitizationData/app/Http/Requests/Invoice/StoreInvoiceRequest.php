@@ -22,8 +22,9 @@ class StoreInvoiceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'file' => 'required|file|mimes:jpg,jpeg,png,pdf',
-            'title' => 'nullable|string|max:255',
+            'invoices' => "array|required",
+            'invoices.*.file' => 'required|file|mimes:jpg,jpeg,png,pdf',
+            'invoices.*.title' => 'nullable|string|max:255',
         ];
     }
 }

@@ -64,12 +64,12 @@ class InvoiceController extends Controller
     }
 
 
-    public function update(UpdateInvoiceRequest $request)
+    public function update(UpdateInvoiceRequest $request, $id)
     {
         try {
             $validated = $request->validated();
-            $data = $this->invoiceRepository->upload($validated, $request);
-            return $this->SuccessOne($data['invoice'], InvoiceResource::class, 'Invoice created successfully');
+            $data = $this->invoiceRepository->update($id, $validated);
+            return $this->SuccessOne($data, InvoiceResource::class, 'Invoice created successfully');
         } catch (Throwable $th) {
             $code = 500;
             if ($th->getCode() != 0)

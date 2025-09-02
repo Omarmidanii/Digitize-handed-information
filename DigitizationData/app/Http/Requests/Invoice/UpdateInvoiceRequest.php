@@ -11,7 +11,7 @@ class UpdateInvoiceRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,16 @@ class UpdateInvoiceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'invoice_number' => "integer|sometimes",
+            "client_name" => "string|sometimes|min:3",
+            "doctor_name" => "string|sometimes|min:3",
+            "patient_name" => "string|sometimes|min:3",
+            "total_price" => "integer|sometimes|min:1",
+            "date" => "string|sometimes",
+            "items" => "array|sometimes",
+            "items.*.description" => "string|sometimes",
+            "items.*.quantity" => "integer|sometimes",
+            "items.*.id" => "integer|exists:invoice_items,id"
         ];
     }
 }
