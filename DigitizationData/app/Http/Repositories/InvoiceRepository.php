@@ -212,7 +212,7 @@ class InvoiceRepository extends BaseRepository implements InvoiceRepositoryInter
         if (isset($data["items"])) {
             foreach ($data['items'] as $item) {
                 $it = InvoiceItem::find($item['id']);
-                $it->updated([
+                $it->update([
                     'description' => $item['description'] ?? "",
                     'quantity' => $item['quantity'] ?? 1
                 ]);
