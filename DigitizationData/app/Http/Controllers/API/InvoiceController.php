@@ -26,7 +26,7 @@ class InvoiceController extends Controller
     public function index()
     {
         try {
-            $data = $this->invoiceRepository->index();
+            $data = $this->invoiceRepository->index(['file']);
             return $this->SuccessMany($data, InvoiceResource::class, 'Invoices indexed successfully');
         } catch (Throwable $th) {
             $code = 500;
