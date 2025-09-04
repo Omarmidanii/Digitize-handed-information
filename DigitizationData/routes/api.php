@@ -25,6 +25,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/{id}', 'destroy');
         Route::get('/exportselected', ' ');
         Route::post('/upload', 'upload');
+        Route::post('/{id}', 'update');
+
+
+    
     });
     Route::controller(FileController::class)->prefix('files')->group(function () {
         Route::get('', 'index');

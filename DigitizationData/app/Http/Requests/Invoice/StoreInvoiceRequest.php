@@ -26,4 +26,5 @@ class StoreInvoiceRequest extends FormRequest
             'files.*' => 'required|file|mimes:jpg,jpeg,png,pdf',
         ];
     }
+
 }

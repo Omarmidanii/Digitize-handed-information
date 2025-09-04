@@ -22,7 +22,6 @@ class InvoiceRepository extends BaseRepository implements InvoiceRepositoryInter
     }
 
 
-
     public function upload($data, $request)
     {
         $results = [];
@@ -135,6 +134,8 @@ class InvoiceRepository extends BaseRepository implements InvoiceRepositoryInter
                             $get('القيمة'),
                         ]))),
                     ];
+
+
 
                     $payload = validator($mapped, [
                         'name' => 'required|string|max:255',
