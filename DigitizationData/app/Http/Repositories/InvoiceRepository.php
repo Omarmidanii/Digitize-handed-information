@@ -219,7 +219,7 @@ class InvoiceRepository extends BaseRepository implements InvoiceRepositoryInter
             }
         }
         $invoice = Invoice::find($id);
-        $invoice->updated([
+        $invoice->update([
             "invoice_number" => $data['invoice_number'],
             "client_name" => $data['client_name'],
             "doctor_name" => $data['doctor_name'],
