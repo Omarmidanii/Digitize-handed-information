@@ -70,41 +70,37 @@ class InvoiceRepository extends BaseRepository implements InvoiceRepositoryInter
             }
         }
 
-        // Process each data object
-        foreach ($data as $item) {
+        // Process each file
+        foreach ($data['files'] as $file) {
             try {
-                // Check if this item has a file
-                if (!isset($item['file']) || !$item['file'] instanceof \Illuminate\Http\UploadedFile) {
+                if (!$file instanceof \Illuminate\Http\UploadedFile) {
                     $results[] = [
-                        'error' => 'Invalid file object in data array',
-                        'data' => $item
+                        'error' => 'Invalid file object',
+                        'data' => $file
                     ];
                     continue;
                 }
 
-                $uploaded = $item['file'];
-                $itemData = $item['title'] ?? []; // Extract additional data if provided
-
-                $storedPath = $uploaded->store('invoices', 'public');
+                $storedPath = $file->store('invoices', 'public');
                 $absPath = Storage::disk('public')->path($storedPath);
-                $type = strtolower($uploaded->getClientOriginalExtension()) === 'pdf' ? 'pdf' : 'img';
+                $type = strtolower($file->getClientOriginalExtension()) === 'pdf' ? 'pdf' : 'img';
 
-                $result = DB::transaction(function () use ($itemData, $type, $storedPath, $absPath, $uploaded) {
+                $result = DB::transaction(function () use ($type, $storedPath, $absPath, $file) {
                     // Create file record
-                    $file = File::create([
+                    $fileRecord = File::create([
                         'type' => $type,
                         'path' => $storedPath,
-                        'title' => $itemData ?? null, // Use title from item data
+                        'title' => $file->getClientOriginalName(),
                     ]);
 
                     // Call Python service with the file
                     $url = config('services.ocr.endpoint');
-                    \Log::info("Processing file: " . $uploaded->getClientOriginalName());
+                    \Log::info("Processing file: " . $file->getClientOriginalName());
 
                     $resp = Http::timeout(60)
-                        ->attach('file', file_get_contents($absPath), $uploaded->getClientOriginalName())
+                        ->attach('file', file_get_contents($absPath), $file->getClientOriginalName())
                         ->post($url . '/analyze', [
-                            'filename' => $uploaded->getClientOriginalName(),
+                            'filename' => $file->getClientOriginalName(),
                         ]);
 
                     if ($resp->failed()) {
@@ -152,7 +148,7 @@ class InvoiceRepository extends BaseRepository implements InvoiceRepositoryInter
                     ])->validate();
 
                     $invoice = Invoice::create($payload + [
-                        'file_id' => $file->id,
+                        'file_id' => $fileRecord->id,
                         'user_id' => Auth::id(),
                     ]);
 
@@ -166,11 +162,7 @@ class InvoiceRepository extends BaseRepository implements InvoiceRepositoryInter
                         'value' => $price * $quantity,
                     ]);
 
-                    return [
-                        'file' => $file,
-                        'invoice' => $invoice,
-                        'item' => $item
-                    ];
+                    return $invoice;
                 });
 
                 // Add successful result to results array
@@ -185,8 +177,7 @@ class InvoiceRepository extends BaseRepository implements InvoiceRepositoryInter
                 // Add error to results array
                 $results[] = [
                     'error' => $e->getMessage(),
-                    'filename' => isset($uploaded) ? $uploaded->getClientOriginalName() : 'Unknown',
-                    'data' => $item
+                    'filename' => $file->getClientOriginalName(),
                 ];
             }
         }

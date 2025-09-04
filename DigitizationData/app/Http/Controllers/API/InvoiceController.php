@@ -41,7 +41,7 @@ class InvoiceController extends Controller
         try {
             $validated = $request->validated();
             $data = $this->invoiceRepository->upload($validated, $request);
-            return $this->SuccessOne($data['invoice'], InvoiceResource::class, 'Invoice created successfully');
+            return $this->SuccessOne($data, InvoiceResource::class, 'Invoice created successfully');
         } catch (Throwable $th) {
             $code = 500;
             if ($th->getCode() != 0)
@@ -69,7 +69,7 @@ class InvoiceController extends Controller
         try {
             $validated = $request->validated();
             $data = $this->invoiceRepository->update($id, $validated);
-            return $this->SuccessOne($data, InvoiceResource::class, 'Invoice created successfully');
+            return $this->SuccessOne($data, InvoiceResource::class, 'Invoice updated successfully');
         } catch (Throwable $th) {
             $code = 500;
             if ($th->getCode() != 0)
