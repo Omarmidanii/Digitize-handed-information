@@ -58,8 +58,7 @@ class FileController extends Controller
             $ext = pathinfo($file->path, PATHINFO_EXTENSION);
             $name = ($file->title ?: pathinfo($file->path, PATHINFO_FILENAME));
             $name = Str::slug($name) . '.' . $ext;
-            Storage::disk('public')->download($file->path, $name);
-            return $this->SuccessOne($file->url, null, "File Has Been Downloaded Successfully", 200);
+            return Storage::disk('public')->download($file->path, $name);
         } catch (Exception $e) {
             $code = 500;
             if ($e->getCode() != 0)
