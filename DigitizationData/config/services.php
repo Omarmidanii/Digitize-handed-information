@@ -36,6 +36,7 @@ return [
     ],
     'ocr' => [
         'endpoint' => env('OCR_SERVICE_URL', 'http://localhost:8000'),
+        // "handendpoint" => env("OCR_SERVICE_URL", "http://localhost:8000")
     ],
 
 ];

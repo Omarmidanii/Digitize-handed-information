@@ -8,9 +8,11 @@ use App\Trait\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Interfaces\InvoiceRepositoryInterface;
 use App\Http\Requests\Invoice\StoreInvoiceRequest;
+use App\Models\File;
+use Illuminate\Support\Str;
 use Throwable;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Storage;
 
 class InvoiceController extends Controller
 {
@@ -81,13 +83,16 @@ class InvoiceController extends Controller
     public function exportSelected(Request $request)
     {
         try {
-            $validated = $request->$request->validated([
-                'ids' => 'required|array|min:1',
-                'ids.*' => 'integer|distinct|exists:invoices,id',
-                'filename' => 'sometimes|string|max:100',
+            $validated = $request->validate([
+                'start_date' => 'string',
+                'end_date' => 'string',
             ]);
             $data = $this->invoiceRepository->exportSelected($validated);
-            return $this->SuccessOne($data, InvoiceResource::class, 'Invoices exported successfully');
+            $file = File::find(57);
+            $ext = pathinfo($file->path, PATHINFO_EXTENSION);
+            $name = ($file->title ?: pathinfo($file->path, PATHINFO_FILENAME));
+            $name = Str::slug($name) . '.' . $ext;
+            return Storage::disk("public")->download($file->path, $name);
         } catch (Throwable $th) {
             $code = 500;
             if ($th->getCode() != 0)

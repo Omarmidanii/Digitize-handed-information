@@ -23,12 +23,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('', 'index');
         Route::get('/{id}', 'show');
         Route::delete('/{id}', 'destroy');
-        Route::get('/exportselected', ' ');
-        Route::post('/upload', 'upload');
+        Route::post('exportselected', 'exportSelected');
+        Route::post('/upload', 'upload')->name("ana");
         Route::post('/{id}', 'update');
-
-
-    
     });
     Route::controller(FileController::class)->prefix('files')->group(function () {
         Route::get('', 'index');
